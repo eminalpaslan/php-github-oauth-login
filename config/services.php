@@ -34,11 +34,18 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
-    'github' => [
-        'client_id'     => env('GITHUB_CLIENT_ID'),
-        'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect'      => env('GITHUB_REDIRECT', 'http://127.0.0.1:8000/auth/github/callback'),
-    ],
+    
+    'oidc' => [
+    'client_id'     => env('OIDC_CLIENT_ID'),
+    'client_secret' => env('OIDC_CLIENT_SECRET'),
+    'redirect_uri'  => env('OIDC_REDIRECT_URI'),
+    'scope'         => env('OIDC_SCOPE', 'openid'),
+    'auth_url'      => env('OIDC_AUTH_URL'),
+    'token_url'     => env('OIDC_TOKEN_URL'),
+    'userinfo_url'  => env('OIDC_USERINFO_URL'),
+    'end_session_url' => env('OIDC_END_SESSION_URL'),
+],
+
 
 
 ];

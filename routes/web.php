@@ -4,30 +4,32 @@
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // Login olduysa direkt hoşgeldin'e
+    if (session()->has('user')) {
+        return redirect('/hosgeldin');
+    }
+    return view('welcome'); // buradan "Giriş Yap" butonu ile /auth/redirect'e gidersin
 });
+
+// Giriş başlatma (login butonuna tıklayınca)
+Route::get('/auth/redirect', 'Auth\OidcController@redirect')->name('login');
+
+// Callback (provider giriş sonrası buraya yönlendirir)
+// SİLME: Route::get('/signin-busign', 'Auth\OidcController@callback');
+Route::match(['GET','POST'], '/signin-busign', 'Auth\OidcController@callback');
+
+
+// Giriş sonrası sayfa (session kontrolü)
 Route::get('/hosgeldin', function () {
-    return view('hosgeldin');
-})->middleware('auth');
-Route::get('/auth/github', 'Auth\LoginController@redirectToGithub');
-Route::get('/auth/github/redirect', 'Auth\LoginController@redirectToGithub');
-Route::get('/auth/github/callback', 'Auth\LoginController@handleGithubCallback');
-
-Route::post('/logout', function() {
-    auth()->logout();
-    session()->invalidate();
-    session()->regenerateToken();
-    return redirect('/');
+    if (!session()->has('user')) {
+        return redirect('/'); // login değilse ana sayfaya
+    }
+    return view('hosgeldin', ['user' => session('user')]);
 });
 
-Route::get('/home', function () {
-    return view('hosgeldin');
-});
+// Çıkış (provider+lokal)
+Route::post('/logout', 'Auth\OidcController@logout')->name('logout');
+
